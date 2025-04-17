@@ -5,8 +5,8 @@ resource "aws_instance" "ec2_instance" {
   subnet_id                   = var.ec2_subnet_id
   vpc_security_group_ids      = concat(var.ec2_sec_grps, [aws_security_group.ec2_sec_grp[0].id])
   associate_public_ip_address = var.associate_public_ip_address
-  iam_instance_profile        = var.ec2_iam_instance_profile != "" ? var.ec2_iam_instance_profile : null
-  # user_data                   = file("${path.module}/Userdata/ec2-base.sh")
+  iam_instance_profile        = var.ec2_iam_instance_profile != "" ? var.ec2_iam_instance_profile : var.create_n_attach_ec2_iam_instance_profile ? aws_iam_instance_profile.ec2_instance_profile[0].name : null
+  user_data                   = var.ec2_user_data
 
   root_block_device {
     volume_size = var.ec2_root_vol_size
@@ -18,6 +18,6 @@ resource "aws_instance" "ec2_instance" {
   }
 
   tags = {
-    Name = local.ec2_identitfier
+    Name = local.ec2_identifier
   }
 }

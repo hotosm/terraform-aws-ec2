@@ -3,9 +3,6 @@ variable "project_meta" {
   description = "Metadata relating to the project for which the database is being created"
   type = object({
     name        = string
-    short_name  = string
-    version     = string
-    url         = string
     environment = string
     team        = string
   })
@@ -36,10 +33,24 @@ variable "associate_public_ip_address" {
   default = true
 }
 
+variable "create_n_attach_ec2_iam_instance_profile" {
+  type    = bool
+  default = false
+}
+
+variable "ec2_instance_profile_policy_statements" {
+  type = list(object({
+    sid       = string
+    effect    = string
+    resources = list(string)
+    actions   = list(string)
+  }))
+
+}
+
 variable "ec2_iam_instance_profile" {
   type    = string
   default = ""
-
 }
 
 variable "create_ssh_key_pair" {
@@ -103,48 +114,60 @@ variable "ec2_ebs_volumes" {
 
 variable "ec2_sec_grp_ingress" {
   type = list(object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
+    ipv6_cidr_blocks = list(string)
   }))
 
   default = [
     {
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port        = 22
+      to_port          = 22
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     },
     {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port        = 80
+      to_port          = 80
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     },
     {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port        = 443
+      to_port          = 443
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     },
   ]
 }
 
 variable "ec2_sec_grp_egress" {
   type = list(object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
+    ipv6_cidr_blocks = list(string)
   }))
 
   default = [
     {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    },
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+    }
   ]
+}
+
+variable "ec2_user_data" {
+  description = "EC2 User data script"
+  type        = string
+  default     = null
 }

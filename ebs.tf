@@ -6,7 +6,7 @@ resource "aws_ebs_volume" "ec2_ebs_volumes" {
   availability_zone = aws_instance.ec2_instance.availability_zone
 
   tags = {
-    Name = "${local.ec2_identitfier}-ec2-${var.ec2_ebs_volumes[count.index].vol_name}"
+    Name = "${local.ec2_identifier}-ec2-${var.ec2_ebs_volumes[count.index].vol_name}"
   }
 }
 
